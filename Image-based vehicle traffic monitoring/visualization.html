@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Image-based vehicle traffic monitoring</title>
+  <meta name="description" content="Image-based vehicle traffic monitoring" />
+  <meta name="generator" content="bookdown 0.17 and GitBook 2.6.7" />
+  <meta property="og:title" content="Image-based vehicle traffic monitoring" />
+  <meta property="og:type" content="book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Image-based vehicle traffic monitoring" />
+  
+
+<meta name="author" content="Geovani Benita" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="index.html"/>
+<link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+<!-- try to highlight automatically the python code with hosted highlight.js-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/default.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+
+<script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Image-based vehicle traffic monitoring</a></li>
+
+<ul class="summary"></ul>
+<li class="divider"></li>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html">
+  <i class="fa fa-check"></i><b></b> Summary </a></li>
+  <li class="divider"></li>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html">
+  <i class="fa fa-check"></i><b>1</b> API Connection</a></li>
+  <li class="divider"></li>
+<li class="chapter" data-level="2" data-path="model.html"><a href="model.html">
+  <i class="fa fa-check"></i><b>2</b> Mask-RCNN Model</a></li>
+<li class="divider"></li>
+<li class="chapter" data-level="3" data-path="visualization.html"><a href="visualization.html">
+  <i class="fa fa-check"></i><b>3</b> Visualizations</a></li>
+  <ul>
+    <li class="chapter" data-level="3.1" data-path="visualization.html"><a href="#3.1">
+      <i class="fa fa-check"></i><b>3.1</b> Traffic camera locations</a></li></li>
+    <li class="chapter" data-level="3.2" data-path="visualization.html"><a href="#3.2">
+      <i class="fa fa-check"></i><b>3.2</b> Total number of vehicles per hour
+captured by a single camera</a></li></li>
+<li class="chapter" data-level="3.3" data-path="visualization.html"><a href="#3.3">
+  <i class="fa fa-check"></i><b>3.3</b> Advanced visualizations</a></li></li>
+  
+    </ul>
+</ul>
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Image-based vehicle traffic monitoring</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="visualization" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> Visualizations</h1>
+<div id="3.1">
+  <h4><span class="header-section-number">3.1</span>
+    Traffic camera locations</h4>
+</div>
+
+</div>
+<p align="justify">Plotting data on map is easier than you’d think. If you have shapefiles, <code class="python">matplotlib</code> can be used to visualize geographical data.
+  Alternatively, you can download desired maps from <a href="https://www.openstreetmap.org">opestreetmap.org</a> as images. On the map area, Zoom in and out to have the 
+  desired area bounding box. Take note of your coordinates <code>[left, right, bottom, top]</code>.</p>
+  <p><img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104043/OpenStreetMaps_annotations_sbkjyo.png" class="center"></p>
+
+  <p>Let's now import the required libraries as well as the dataset containing the geographical location (lon, lat) of each traffic camera.</p>
+  <pre><code class="python"># Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# Read csv file from Dropbox as Pandas DataFrame
+csv = 'https://www.dropbox.com/s/xfazz0mu1z38buz/Singapore_cameras.csv?dl=1'
+cameras =  pd.read_csv(csv,delimiter=',')
+
+# Read the map of Singapore
+SG = plt.imread('./Singapore_map.png')
+</code></pre>
+<p>Our goal is to plot all cameras in the map of Singapore. We are going to label camera <code>1701</code> only, to see where exactly is located.</p>
+<pre><code class="python"># Convert labes of camera_id as string
+cameras['camera_id'] = cameras['camera_id'].astype(str)
+cameras.loc[cameras['camera_id'] == '1701', 'labels'] = '1701' 
+cameras.loc[cameras['camera_id'] != '1701', 'labels'] = '' 
+
+# Open figure + axis
+fig, ax = plt.subplots()
+# Add the map of Singapore 
+# Use the extent keyword of imshow. The order of the argument is [left, right, bottom, top]
+plt.imshow(SG, zorder=0, extent=[103.5846, 104.0419, 1.2002, 1.4829])
+# plot
+ax.scatter(x=cameras['lon'],y=cameras['lat'], color='red')
+# set labels
+ax.set_xlabel('lon')
+ax.set_ylabel('lat')
+
+# annotate points in axis
+for idx, row in cameras.iterrows():
+    ax.annotate(row['labels'], (row['lon'], row['lat']) )
+# force matplotlib to draw the graph
+plt.show()
+</code></pre>
+<img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104092/Traffic_cameras_around_Singapore_iokusf.png" class="center">
+<div id="3.2">
+  <h4><span class="header-section-number">3.2</span>Total number of vehicles per hour captured by a single camera</h4>
+<p>Let's plot the total number of vehicles per hour captured by camera <code>1701</code>. To do so, we have processed 
+  a file with images retrieved every 5 minutes on Wed, November 11, 2019.</p>
+<pre><code>#Import libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#Read csv file from Dropbox as Pandas DataFrame
+csv = 'https://www.dropbox.com/s/qqncxtpnv83r8ex/1701Wednesday.csv?dl=1'
+df =  pd.read_csv(csv,delimiter=',')</code></pre>
+<p>We need to select only objects that are of class 3 (cars), 6 (truck) or 8 (bus). We take advantage of
+   the <code>datetime</code> module that converts timestamps into datetime format, so we can extract days, hours, minutes, etc</p>
+  <pre><code class="python">df  = df.loc[ (df['Detection_Class']==3) | 
+              (df['Detection_Class']==6) | 
+              (df['Detection_Class']==8) ]   #Subset objects that are only vehicles
+#Convert todatetime object
+df['Timestamp_sg_time']= pd.to_datetime(df['Timestamp_sg_time'])
+df['hour'] = df.Timestamp_sg_time.dt.hour  #Extract hour of the day       
+df['ones'] = 1            #Ones to sum up the total number of vehicles
+
+df_plot = df[['hour', 'ones']]    
+#Aggregate hour of the day and total number of cars
+df_plot = df.groupby(['hour']).agg(vehicles=('ones', 'sum')).reset_index() 
+  </code></pre>
+
+<p>We plot the data by running the following lines: </p>
+<pre><code class="python">plt.plot(df_plot['hour'], df_plot['vehicles'], "-o")
+plt.title("Camera '1701' on Wed 13, November 2019")
+plt.xlabel("Hour")
+plt.ylabel("Total number of vehicles")
+plt.show()
+</code></pre>
+<img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104033/Total_vehicles_13-11-2019_tfns7q.png" class="center">
+
+<div id="3.3">
+  <h4><span class="header-section-number">3.3</span>
+    Advanced visualizations</h4>
+</div>
+<p>The following map was created in <a href="http://kepler.gl">kepler</a>.</p>
+
+<p>It displays the cumulative number of vehicles (represented by the size of the circles) captured by all cameras on Wed 13, 
+November 2019. The labels corresponds to the column <code>row_number</code> of the dataset containing the location of the speed cameras.
+Kepler is Uber's answer to geospatial analytics. Open-sourced in 2019 it was built with the end-user in mind, 
+creating a 'drag n' drop' system, being able to analyze millions of points in an instant. </p>
+<p><img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104048/Total_vehiucles_map_Nov_13_2019_rugpyb.png" class="center"></p>
+<p>The following plot was created in <code>R</code>. It shows the total number of vehicles between Mon 11 - Sun 17, November 2019 
+  captured by camera <code>1701</code>. We have droped objects with accuracy less than 0.75.</p>
+  <p>Interestingly, traffic patterns do not change much between weekends and weekdays.</p>
+
+  <p><img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104037/number_of_vehicles_one_week_camera_1701_mcb80l.png" class="center"></p>
+
+<p>Lastly, let's plot the total number of vehicles captured by camera <code>1701</code> every Wednesday between November 2019 and July 2020. 
+  We have droped objects with accuracy less than 0.75.</p>
+
+<p>We can notice a decrease in traffic flow during 2020 Singapore circuit breaker measures (3 April - 1 June, 2020).</p>
+  <img src="https://res.cloudinary.com/dxbnpu2rx/image/upload/v1614104037/number_of_vehicles_dec_to_july_brnijv.png" class="center">
+<p>You can try to run the code in the following <a href="https://colab.research.google.com/drive/1IzYjkv3GxCMFsCYCSRZ7auk24K-SvsZx#scrollTo=ozUyZfGXC9CV&uniqifier=1">
+Notebook</a>.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+        <a href="model.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+      </div>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": null,
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
