@@ -606,6 +606,11 @@ About
 			border-radius:50%;	
 }
 
+.resize {
+    width: 100px;
+    height: auto;
+}
+
 .team-detail h4 {
 	font-weight: 700;
 }
